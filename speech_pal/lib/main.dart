@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:convert';
 void main() {
   runApp(const MyApp());
 }
@@ -72,39 +73,34 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _isRecording = false;
-  int _elapsedSeconds = 0;
-  Timer? _timer;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  BluetoothDevice? arduinoDevice;
 
-  void _toggleRecording() {
+  void _toggleRecording() async {
     setState(() {
-      if (!_isRecording) {
-        _elapsedSeconds = 0; // Reset elapsed time if starting recording
-        _startTimer();
-      } else {
-        _stopTimer();
-      }
       _isRecording = !_isRecording;
     });
+
+    if (_isRecording) {
+      await sendCommandToArduino('START_RECORDING');
+    } else {
+      await sendCommandToArduino('STOP_RECORDING');
+    }
   }
 
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _elapsedSeconds++;
+  Future<void> sendCommandToArduino(String command) async {
+    if (arduinoDevice != null) {
+      List<BluetoothService> services = await arduinoDevice!.discoverServices();
+      services.forEach((service) {
+        if (service.uuid.toString() == 'YOUR_SERVICE_UUID') { // Replace with your Arduino service UUID
+          service.characteristics.forEach((characteristic) async {
+            if (characteristic.uuid.toString() == 'YOUR_CHARACTERISTIC_UUID') { // Replace with your Arduino characteristic UUID
+              await characteristic.write(utf8.encode(command));
+            }
+          });
+        }
       });
-    });
-  }
-
-  void _stopTimer() {
-    _timer?.cancel();
-  }
-
-  String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
-    final minutesStr = minutes.toString().padLeft(2, '0');
-    final secondsStr = remainingSeconds.toString().padLeft(2, '0');
-    return '$minutesStr:$secondsStr';
+    }
   }
 
   @override
@@ -117,10 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Elapsed Time: ${_formatTime(_elapsedSeconds)}',
-              style: const TextStyle(fontSize: 16),
-            ),
             GestureDetector(
               onTap: _toggleRecording,
               child: Container(
