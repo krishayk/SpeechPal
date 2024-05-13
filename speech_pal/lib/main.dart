@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
+
 void main() {
   runApp(const MyApp());
 }
@@ -144,7 +145,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
-                child: const Text('Continue'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(fontSize: 18.0),
+                ),
               ),
             ],
           ],
@@ -163,33 +173,98 @@ class PresentationTypeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('What type of presentation are you looking for?'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                _navigateToResultScreen(context, 'Casual');
-              },
-              child: const Text('Casual'),
+            DataTable(
+              columns: [
+                DataColumn(label: Text('Type')),
+                DataColumn(label: Text('Tone')),
+                DataColumn(label: Text('Structure')),
+                DataColumn(label: Text('Language Use')),
+                DataColumn(label: Text('Goals')),
+              ],
+              rows: [
+                DataRow(cells: [
+                  DataCell(Text('Casual')),
+                  DataCell(Text('Informal, relaxed, conversational')),
+                  DataCell(Text('Flexible, less structured')),
+                  DataCell(Text('Everyday language, slang, colloquialisms')),
+                  DataCell(Text('Building relationships, socializing')),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('Formal')),
+                  DataCell(Text('Serious, respectful, professional')),
+                  DataCell(Text('Structured, organized')),
+                  DataCell(Text('Standard language, proper grammar')),
+                  DataCell(Text('Communicating information, conducting business')),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('Debate')),
+                  DataCell(Text('Assertive, argumentative, confrontational')),
+                  DataCell(Text('Structured with defined roles')),
+                  DataCell(Text('Precise, persuasive language, logical arguments')),
+                  DataCell(Text('Persuading others, proving a point')),
+                ]),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToResultScreen(context, 'Formal');
-              },
-              child: const Text('Formal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToResultScreen(context, 'Debate');
-              },
-              child: const Text('Debate'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToResultScreen(context, 'Etc.');
-              },
-              child: const Text('Etc.'),
+            const SizedBox(height: 50),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _navigateToResultScreen(context, 'Casual');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Casual',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+                SizedBox(height: 16.0), // Add spacing between buttons
+                ElevatedButton(
+                  onPressed: () {
+                    _navigateToResultScreen(context, 'Formal');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Formal',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+                SizedBox(height: 16.0), // Add spacing between buttons
+                ElevatedButton(
+                  onPressed: () {
+                    _navigateToResultScreen(context, 'Debate');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Debate',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+                SizedBox(height: 40), // Add spacing between buttons and text
+                Text(
+                  'Please select an option from above to continue giving suggestions of your tone or pitch during your recorded conversation.',
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ],
         ),
@@ -218,13 +293,23 @@ class PresentationTypeScreen extends StatelessWidget {
                 ),
               );
             },
-            child: const Text('Yes'),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: const Text(
+              'Yes',
+              style: TextStyle(fontSize: 18.0),
+            ),
           ),
         ],
       ),
     );
   }
 }
+
+
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -272,7 +357,7 @@ class ResultScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Text(
-            'Here is the result of your presentation. This is just filler text for now.',
+            'Your tone during the entire conversation was well balanced for your intended conversation type. Your pitch might have been a little higher than most parts of the audio, however.',
             textAlign: TextAlign.center,
           ),
         ),
